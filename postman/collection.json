@@ -1,0 +1,88 @@
+{
+  "info": {
+    "name": "Hotel Offer Orchestrator",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. Get Hotels - Delhi (Overlaps)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/api/hotels?city=delhi",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "hotels"],
+          "query": [{ "key": "city", "value": "delhi" }]
+        }
+      }
+    },
+    {
+      "name": "2. Get Hotels - Price Filtered",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/api/hotels?city=delhi&minPrice=4000&maxPrice=6000",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "hotels"],
+          "query": [
+            { "key": "city", "value": "delhi" },
+            { "key": "minPrice", "value": "4000" },
+            { "key": "maxPrice", "value": "6000" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "3. Get Hotels - No Results",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/api/hotels?city=london",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "hotels"],
+          "query": [{ "key": "city", "value": "london" }]
+        }
+      }
+    },
+    {
+      "name": "4. Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/health",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["health"]
+        }
+      }
+    },
+    {
+      "name": "5. Simulate Supplier A Down (Degraded Mode)",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "X-Simulate-Failure", "value": "true", "type": "text" }
+        ],
+        "url": {
+          "raw": "http://localhost:3000/api/hotels?city=delhi",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "hotels"],
+          "query": [{ "key": "city", "value": "delhi" }]
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+services:
+  temporal:
+    image: temporalio/admin-tools:latest
+    command: ["temporal", "server", "start-dev", "--ip", "0.0.0.0"]
+    ports:
+      - "7233:7233"
+      - "8233:8233"
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+
+  api:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - REDIS_URL=redis://redis:6379
+      - TEMPORAL_ADDRESS=temporal:7233
+      - SUPPLIER_BASE_URL=http://api:3000
+      - LOG_LEVEL=info
+    restart: on-failure
+    depends_on:
+      - temporal
+      - redis
+
+  worker:
+    build: .
+    command: node dist/worker.js
+    environment:
+      - REDIS_URL=redis://redis:6379
+      - TEMPORAL_ADDRESS=temporal:7233
+      - SUPPLIER_BASE_URL=http://api:3000
+      - LOG_LEVEL=info
+    restart: on-failure
+    depends_on:
+      - temporal
+      - api
