@@ -121,6 +121,33 @@ When the same hotel (matched by name, case-insensitive) appears from both suppli
 | Leela    | ₹15,000 / 18%      | —                   | **Supplier A**      | Only in A                           |
 | Novotel  | —                   | ₹6,500 / 12%       | **Supplier B**      | Only in B                           |
 
+## Testing
+
+The project ships with a Jest + ts-jest unit/integration test suite. Redis is faked with `ioredis-mock`, the Temporal client is dependency-injected via `_setTemporalClientForTest`, and HTTP routes are exercised through `supertest` against an Express app built with `createTestApp()` (no real listener required for routing tests; route suites that bind use `127.0.0.1` to avoid sandbox EPERM).
+
+```bash
+npm test               # run all unit + integration suites
+npm run test:coverage  # run with coverage (thresholds: 90/85/90/90)
+npm run test:watch     # watch mode
+```
+
+| Suite                          | Focus                                                              |
+|--------------------------------|--------------------------------------------------------------------|
+| `activities.test.ts`           | Supplier fetch URLs, timeouts, error → empty-array degradation     |
+| `deduplication.test.ts`        | Pure dedupe — lowest price, commission tiebreaker                  |
+| `contract.test.ts`             | Mock supplier response shape matches `RawHotel`                    |
+| `redis.test.ts`                | `cacheHotels` / `getFilteredHotels` against `ioredis-mock`         |
+| `routes/hotels.test.ts`        | Query validation (400s), workflow happy path, 500s on Temporal err |
+| `routes/health.test.ts`        | Healthy / degraded / unhealthy status combinations                 |
+| `routes/suppliers.test.ts`     | Mock supplier filtering and `X-Simulate-Failure` toggle            |
+
+**E2E tests** (`src/__tests__/e2e/`) are excluded from the default run and require the full Docker stack to be up. To run them against the live stack:
+
+```bash
+docker compose up -d --build
+docker compose -f docker-compose.test.yml run --rm test-runner
+```
+
 ## Testing with Postman
 
 A Postman collection is included at `postman/collection.json`. Import it into Postman to test:
@@ -137,7 +164,9 @@ A Postman collection is included at `postman/collection.json`. Import it into Po
 
 ```
 ├── docker-compose.yml          # 4-service stack (Temporal, Redis, API, Worker)
+├── docker-compose.test.yml     # Optional E2E test runner against the live stack
 ├── Dockerfile                  # Multi-stage build (builder → production)
+├── jest.config.ts              # Jest + ts-jest config (coverage thresholds: 90/85/90/90)
 ├── package.json
 ├── tsconfig.json
 ├── postman/
@@ -153,10 +182,24 @@ A Postman collection is included at `postman/collection.json`. Import it into Po
     ├── types.ts                # TypeScript interfaces
     ├── data/
     │   └── suppliers.ts        # Mock supplier hotel data
-    └── routes/
-        ├── hotels.ts           # GET /api/hotels (Temporal client → workflow)
-        ├── suppliers.ts        # Mock supplier endpoints
-        └── health.ts           # GET /health
+    ├── routes/
+    │   ├── hotels.ts           # GET /api/hotels (Temporal client → workflow)
+    │   ├── suppliers.ts        # Mock supplier endpoints
+    │   └── health.ts           # GET /health
+    ├── test-utils/
+    │   ├── app.ts              # createTestApp() — Express app without listen()
+    │   └── fixtures.ts         # makeHotel() / makeHotelResponse() builders
+    └── __tests__/
+        ├── activities.test.ts        # fetchSupplierHotels + cacheResults
+        ├── deduplication.test.ts     # Pure dedupe rules (price → commission)
+        ├── contract.test.ts          # Supplier response schema contract
+        ├── redis.test.ts             # RedisService against ioredis-mock
+        ├── routes/
+        │   ├── hotels.test.ts        # GET /api/hotels (validation, happy, errors)
+        │   ├── health.test.ts        # GET /health (healthy/degraded/unhealthy)
+        │   └── suppliers.test.ts     # Mock supplier route filtering
+        └── e2e/
+            └── full-flow.test.ts     # Live-stack E2E (excluded from default run)
 ```
 
 ## Environment Variables
@@ -198,3 +241,4 @@ npm run dev:worker
 - **API Framework:** Express 5
 - **Logging:** Pino + pino-http
 - **Containerization:** Docker, multi-stage builds
+- **Testing:** Jest + ts-jest, supertest, ioredis-mock
