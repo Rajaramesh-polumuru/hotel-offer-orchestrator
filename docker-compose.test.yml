@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  test-runner:
+    build: .
+    command: npx jest --testPathPattern=e2e --forceExit
+    environment:
+      - TEMPORAL_ADDRESS=temporal:7233
+      - REDIS_URL=redis://redis:6379
+      - SUPPLIER_BASE_URL=http://api:3000
+    depends_on:
+      - api
+      - worker
+      - temporal
+      - redis

@@ -1,0 +1,25 @@
+Error: listen EPERM: operation not permitted 0.0.0.0
+    at Server.setupListenHandle [as _listen2] (node:net:1915:21)
+    at listenInCluster (node:net:1994:12)
+    at Server.listen (node:net:2099:7)
+    at Test.serverAddress (/Users/rajaramesh/Desktop/hotel-offer-orchestrator/node_modules/supertest/lib/test.js:63:35)
+    at new Test (/Users/rajaramesh/Desktop/hotel-offer-orchestrator/node_modules/supertest/lib/test.js:49:14)
+    at Object.obj.<computed> [as get] (/Users/rajaramesh/Desktop/hotel-offer-orchestrator/node_modules/supertest/index.js:40:18)
+    at Object.<anonymous> (/Users/rajaramesh/Desktop/hotel-offer-orchestrator/src/__tests__/routes/health.test.ts:29:41)
+    at Promise.then.completed (/Users/rajaramesh/Desktop/hotel-offer-orchestrator/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (<anonymous>)
+    at callAsyncCircusFn (/Users/rajaramesh/Desktop/hotel-offer-orchestrator/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusTest (/Users/rajaramesh/Desktop/hotel-offer-orchestrator/node_modules/jest-circus/build/run.js:316:40)
+    at async _runTest (/Users/rajaramesh/Desktop/hotel-offer-orchestrator/node_modules/jest-circus/build/run.js:252:3)
+    at async _runTestsForDescribeBlock (/Users/rajaramesh/Desktop/hotel-offer-orchestrator/node_modules/jest-circus/build/run.js:126:9)
+    at async _runTestsForDescribeBlock (/Users/rajaramesh/Desktop/hotel-offer-orchestrator/node_modules/jest-circus/build/run.js:121:9)
+    at async run (/Users/rajaramesh/Desktop/hotel-offer-orchestrator/node_modules/jest-circus/build/run.js:71:3)
+    at async runAndTransformResultsToJestFormat (/Users/rajaramesh/Desktop/hotel-offer-orchestrator/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at async jestAdapter (/Users/rajaramesh/Desktop/hotel-offer-orchestrator/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at async runTestInternal (/Users/rajaramesh/Desktop/hotel-offer-orchestrator/node_modules/jest-runner/build/runTest.js:367:16)
+    at async runTest (/Users/rajaramesh/Desktop/hotel-offer-orchestrator/node_modules/jest-runner/build/runTest.js:444:34) {
+  code: 'EPERM',
+  errno: -1,
+  syscall: 'listen',
+  address: '0.0.0.0'
+}

@@ -58,7 +58,15 @@ class RedisService {
       pipeline.expire(hashKey, config.cacheTtlSeconds);
     }
 
-    await pipeline.exec();
+    const results = await pipeline.exec();
+    // Check for partial pipeline failures (fix #8)
+    if (results) {
+      for (const [err] of results) {
+        if (err) {
+          logger.error({ err, city }, 'Redis pipeline command failed');
+        }
+      }
+    }
     logger.info({ city, count: hotels.length }, 'Cached hotels to Redis');
   }
 
